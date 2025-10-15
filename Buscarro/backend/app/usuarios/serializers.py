@@ -25,7 +25,6 @@ class RegisterSerializer(serializers.Serializer):
             email=validated_data['email'],
             password=validated_data['password1']
         )
-        self.send_welcome_email_to_queue(validated_data['email'], validated_data['username'])
         return user
 
 class LoginSerializer(serializers.Serializer):

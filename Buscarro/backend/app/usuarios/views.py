@@ -1,4 +1,4 @@
-from users.serializers import RegisterSerializer, UserSerializer
+from usuarios.serializers import RegisterSerializer
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
