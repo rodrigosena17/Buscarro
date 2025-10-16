@@ -1,0 +1,49 @@
+version: '3.8'
+
+
+services:
+  core:
+    build: .
+  
+    environment:
+      - DJANGO_PROD_ENV=True
+      - DJANGO_COMMENTS=True
+    depends_on:
+      - postgres
+    ports:
+      - '8000:8000'
+    networks: 
+      - backend-network 
+        
+
+  postgres:
+    image: 'postgres:15-alpine'
+    container_name: postgres
+    environment:
+      - POSTGRES_DB=django
+      - POSTGRES_PASSWORD=liana
+      - POSTGRES_USER=postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    expose:
+      - '5432'
+    networks:
+      - backend-network    
+
+  frontend:
+    build: 
+    container_name: frontend
+    depends_on:
+      - 
+    ports:
+      - 
+    networks:
+      - backend-network  
+  
+
+volumes:
+  postgres_data:
+
+networks:
+  backend-network:
+    driver: bridge
