@@ -3,3 +3,7 @@ venv/
 /core/__pycache__/
 *.pyc
 db.sqlite3
+/usuarios/migrations/
+/anuncios/migrations/
+/usuarios/__pycache__/
+/anuncios/__pycache__/
