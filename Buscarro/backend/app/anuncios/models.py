@@ -7,8 +7,12 @@ class Origem(models.TextChoices):
     MERCADO_LIVRE = 'MERCADO_LIVRE', 'Mercado Livre'
     OUTROS = 'OUTROS', 'Outros'
 
+# class Categoria(models.TextChoices):
+    
+
 class Anuncio(models.Model):
     titulo = models.CharField(max_length=255)
+    url = models.URLField(max_length=500)
     modelo = models.CharField(max_length=120)
     marca = models.CharField(max_length=120)
     ano = models.CharField(max_length=4)
