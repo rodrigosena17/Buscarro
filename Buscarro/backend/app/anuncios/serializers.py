@@ -16,10 +16,10 @@ class AnuncioSerializer(serializers.ModelSerializer):
 
 
 class FavoritoSerializer(serializers.ModelSerializer):
+    anuncio = AnuncioSerializer(read_only=True)
+    anuncio_id = serializers.PrimaryKeyRelatedField(queryset=Anuncio.objects.all(), source='anuncio', write_only=True)
     class Meta:
         model = Favorito
-        anuncio = AnuncioSerializer(read_only=True)
-        anuncio_id = serializers.PrimaryKeyRelatedField(queryset=Anuncio.objects.all(), source='anuncio', write_only=True)
         fields = ['id', 'usuario', 'anuncio', 'anuncio_id']
 
         

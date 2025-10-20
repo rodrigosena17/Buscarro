@@ -4,7 +4,9 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.decorators import api_view, permission_classes, action
 from rest_framework import status, viewsets, filters
+from rest_framework.filters import OrderingFilter
 from rest_framework.pagination import PageNumberPagination
+from django_filters.rest_framework import DjangoFilterBackend
 from .serializers import AnuncioSerializer
 from .models import Anuncio, Favorito
 from django.db.models import Q
@@ -15,9 +17,11 @@ from django.db.models import Q
 class AnuncioViewSet(viewsets.ModelViewSet):
     queryset = Anuncio.objects.all()
     serializer_class = AnuncioSerializer
-    filter_backends = [filters.SearchFilter]
+    filter_backends = [filters.SearchFilter, DjangoFilterBackend, OrderingFilter]
     search_fields = ['titulo', 'descricao', 'marca', 'modelo', 'cor', 'localizacao']
     filterset_fields = ['ano', 'marca', 'modelo', 'origem']
+    ordering_fields = ['preco', 'ano']
+    ordering = ['preco']
 
     @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated])
     def favoritar(self, request, pk=None):
@@ -29,17 +33,6 @@ class AnuncioViewSet(viewsets.ModelViewSet):
         else:
             favorito.delete()
             return Response({'status': 'anúncio desfavoritado'}, status=status.HTTP_200_OK)
-        
-    @action(detail=False, methods=['post'], permission_classes=[IsAuthenticated])
-    def desfavoritar(self, request):
-        anuncio_id = request.data.get('anuncio_id')
-        usuario = request.user
-        try:
-            favorito = Favorito.objects.get(usuario=usuario, anuncio_id=anuncio_id)
-            favorito.delete()
-            return Response({'status': 'anúncio desfavoritado'}, status=status.HTTP_200_OK)
-        except Favorito.DoesNotExist:
-            return Response({'error': 'Favorito não encontrado'}, status=status.HTTP_404_NOT_FOUND)
         
     @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated])
     def meus_favoritos(self, request):
@@ -53,15 +46,14 @@ class AnuncioViewSet(viewsets.ModelViewSet):
         serializer = AnuncioSerializer(anuncios, many=True, context={'request': request})
         return Response(serializer.data)
 
-@swagger_auto_schema(method='get', operation_summary="List all ads", )
-@api_view(['GET'])
-@permission_classes([AllowAny])
-def list_anuncios(request):
-    anuncios = Anuncio.objects.all()
-    serializer = AnuncioSerializer(anuncios, many=True)
-    return Response(serializer.data)
-
-
+@swagger_auto_schema(method='get', operation_summary="Search ads with filters",
+                     manual_parameters=[openapi.Parameter(
+                        name='search',
+                        in_=openapi.IN_QUERY,  
+                        required=False,
+                        type=openapi.TYPE_STRING,
+                        description='Search term for ad'
+                    )])
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def search_anuncios(request):
@@ -77,7 +69,6 @@ def search_anuncios(request):
     ano = request.GET.get('ano')
     origem = request.GET.get('origem')
     cor = request.GET.get('cor')
-    origem = request.GET.get('origem')
     if marca:
         anuncios = anuncios.filter(marca__iexact=marca)
     if modelo:
@@ -91,6 +82,6 @@ def search_anuncios(request):
 
     paginator = PageNumberPagination()
     page = paginator.paginate_queryset(anuncios, request)
-    serializer = AnuncioSerializer(page, many=True)
+    serializer = AnuncioSerializer(page, many=True, context={'request': request})
     return paginator.get_paginated_response(serializer.data)
 
