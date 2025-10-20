@@ -9,5 +9,3 @@ urlpatterns = [
     path('', include(router.urls)),
     path('anuncios/search/', search_anuncios, name='search_anuncios'),
 ]
-
-urlpatterns += router.urls

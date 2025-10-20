@@ -46,7 +46,7 @@ urlpatterns = [
     path('api/login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/login/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/users/', include('usuarios.urls')),
-    path('api/ads', include('anuncios.urls')),
+    path('api/ads/', include('anuncios.urls')),
 ]
 
 
