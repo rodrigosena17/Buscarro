@@ -37,13 +37,12 @@ class AnuncioViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated])
     def meus_favoritos(self, request):
         usuario = request.user
-        favoritos = Favorito.objects.filter(usuario=usuario)
-        anuncios = [favorito.anuncio for favorito in favoritos]
-        page = self.paginate_queryset(anuncios)
+        favoritos = Anuncio.objects.filter(favoritos__usuario=usuario)
+        page = self.paginate_queryset(favoritos)
         if page is not None:
             serializer = AnuncioSerializer(page, many=True, context={'request': request})
             return self.get_paginated_response(serializer.data)
-        serializer = AnuncioSerializer(anuncios, many=True, context={'request': request})
+        serializer = AnuncioSerializer(favoritos, many=True, context={'request': request})
         return Response(serializer.data)
 
 @swagger_auto_schema(method='get', operation_summary="Search ads with filters",
