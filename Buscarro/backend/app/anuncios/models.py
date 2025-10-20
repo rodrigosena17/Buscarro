@@ -13,7 +13,7 @@ class Origem(models.TextChoices):
 class Anuncio(models.Model):
     titulo = models.CharField(max_length=255)
     imagem = models.ImageField(upload_to='static/', null=True, blank=True)
-    url = models.URLField(max_length=500)
+    url = models.URLField(max_length=500, default='')
     modelo = models.CharField(max_length=120)
     marca = models.CharField(max_length=120)
     ano = models.CharField(max_length=4)
