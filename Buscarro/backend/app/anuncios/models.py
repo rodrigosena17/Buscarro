@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 
 # Create your models here.
 class Origem(models.TextChoices):
@@ -8,7 +9,6 @@ class Origem(models.TextChoices):
     OUTROS = 'OUTROS', 'Outros'
 
 # class Categoria(models.TextChoices):
-    
 
 class Anuncio(models.Model):
     titulo = models.CharField(max_length=255)
@@ -22,7 +22,7 @@ class Anuncio(models.Model):
     cor = models.CharField(max_length=50)
     localizacao = models.CharField(max_length=255)
     repassado = models.BooleanField(default=False)
-    is_active = models.BooleanField(default=True)                              
+    ativado = models.BooleanField(default=True)                            
     origem = models.CharField(max_length=20, choices=Origem.choices, default=Origem.OUTROS)
     autor_nome = models.CharField(max_length=120)
     autor_telefone = models.CharField(max_length=20, null=True, blank=True)
@@ -40,3 +40,14 @@ class Anuncio(models.Model):
 
     def __str__(self):
         return f"{self.marca} {self.modelo} {self.ano} - {self.titulo}"
+    
+class Favorito (models.Model):
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='favoritos')
+    anuncio = models.ForeignKey(Anuncio, on_delete=models.CASCADE, related_name='favoritos')
+
+    class Meta:
+        db_table = 'favoritos'
+        unique_together = ('usuario', 'anuncio')
+    
+    def __str__(self):
+        return f"Favorito: {self.usuario.username} - Anuncio ID: {self.anuncio.id}"
