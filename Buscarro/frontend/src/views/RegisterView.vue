@@ -10,10 +10,18 @@
       elevation="16"
       color="#1E1E1E"
     >
-      <div class="text-center mb-8">
-        <h1 class="text-h3 font-weight-bold" style="color: #e53935">
-          Criar Conta
-        </h1>
+      <div class="text-center mb-6">
+        <v-img
+          :src="imageURL"
+          alt="Logo"
+          width="220"
+          height="auto"
+          class="mx-auto mb-2 logo-img"
+          contain
+        ></v-img>
+
+        <!-- Texto "Login" abaixo da logo -->
+        <h2 class="login-title mt-2">Cadastro</h2>
       </div>
 
       <v-text-field
@@ -43,14 +51,17 @@
         class="input-custom"
       ></v-text-field>
 
+      <v-text-field
+        label="Confirmar Senha"
+        type="password"
+        v-model="password"
+        variant="outlined"
+        prepend-inner-icon="mdi-lock"
+        class="input-custom"
+      ></v-text-field>
+
       <!-- Botão Cadastrar -->
-      <v-btn
-        class="register-btn-main mt-6"
-        block
-        rounded
-        size="large"
-        @click="register"
-      >
+      <v-btn class="register-btn-main mt-6" block rounded size="large">
         Cadastrar
       </v-btn>
 
@@ -73,20 +84,13 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { useRouter } from "vue-router";
+import logoImage from "../assets/logo.png";
 
+const imageURL = logoImage;
 const router = useRouter();
 const name = ref("");
 const email = ref("");
 const password = ref("");
-
-function register() {
-  if (name.value && email.value && password.value) {
-    alert("Usuário cadastrado com sucesso!");
-    router.push("/");
-  } else {
-    alert("Preencha todos os campos!");
-  }
-}
 </script>
 
 <style scoped>
@@ -144,7 +148,13 @@ function register() {
   border: 1px solid #616161 !important;
   transition: all 0.3s ease;
 }
-
+.login-title {
+  font-family: "Montserrat", sans-serif;
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 1.6rem;
+  letter-spacing: 0.5px;
+}
 .back-btn:hover {
   color: #ffffff !important;
   border-color: #e53935 !important;

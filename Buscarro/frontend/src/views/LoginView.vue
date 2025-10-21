@@ -10,18 +10,24 @@
       elevation="16"
       color="#1E1E1E"
     >
-      <div class="text-center mb-8">
+      <!-- Logo centralizada -->
+      <div class="text-center mb-6">
         <v-img
-          src="@/assets/logo.jpg"
-          alt="Logo Buscarro"
-          max-width="180"
-          class="mx-auto"
+          :src="imageURL"
+          alt="Logo"
+          width="220"
+          height="auto"
+          class="mx-auto mb-2 logo-img"
           contain
         ></v-img>
+
+        <!-- Texto "Login" abaixo da logo -->
+        <h2 class="login-title mt-2">Login</h2>
       </div>
 
+      <!-- Campos -->
       <v-text-field
-        label="Login"
+        label="Email"
         v-model="email"
         variant="outlined"
         color="red-darken-2"
@@ -38,14 +44,12 @@
         class="input-custom"
       ></v-text-field>
 
-      <!-- Botão Entrar aprimorado -->
-      <v-btn class="login-btn mt-6" block rounded size="large" @click="login">
-        Entrar
-      </v-btn>
+      <!-- Botão Entrar -->
+      <v-btn class="login-btn mt-6" block rounded size="large"> Entrar </v-btn>
 
       <v-divider class="my-6"></v-divider>
 
-      <!-- Botão Criar conta aprimorado -->
+      <!-- Botão Criar conta -->
       <v-btn
         variant="outlined"
         class="register-btn py-4 text-h6"
@@ -61,19 +65,11 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
-import { useRouter } from "vue-router";
+import logoImage from "../assets/logo.png";
 
-const router = useRouter();
+const imageURL = logoImage;
 const email = ref("");
 const password = ref("");
-
-function login() {
-  if (email.value && password.value) {
-    router.push("/app");
-  } else {
-    alert("Preencha todos os campos!");
-  }
-}
 </script>
 
 <style scoped>
@@ -86,6 +82,21 @@ function login() {
 .v-card {
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6) !important;
   border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* ---------- Logo ---------- */
+.logo-img {
+  max-height: 120px;
+  object-fit: contain;
+}
+
+/* ---------- Texto "Login" abaixo da logo ---------- */
+.login-title {
+  font-family: "Montserrat", sans-serif;
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 1.6rem;
+  letter-spacing: 0.5px;
 }
 
 /* ---------- Inputs ---------- */
