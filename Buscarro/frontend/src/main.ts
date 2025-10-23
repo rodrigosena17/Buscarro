@@ -10,12 +10,27 @@ import router from "./router";
 // 👇 importação dos ícones
 import "@mdi/font/css/materialdesignicons.css";
 
+// ✅ Importa e cria o Pinia
+import { createPinia } from "pinia";
+
 const vuetify = createVuetify({
   components,
   directives,
   icons: {
-    defaultSet: "mdi", // 👈 define o pacote padrão de ícones
+    defaultSet: "mdi",
   },
 });
 
-createApp(App).use(vuetify).use(router).mount("#app");
+// ✅ Cria a instância do app
+const app = createApp(App);
+
+// ✅ Cria o Pinia
+const pinia = createPinia();
+
+// ✅ Registra Pinia e outros plugins
+app.use(pinia);
+app.use(vuetify);
+app.use(router);
+
+// ✅ Monta a aplicação
+app.mount("#app");
