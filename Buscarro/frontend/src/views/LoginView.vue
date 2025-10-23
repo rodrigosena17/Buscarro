@@ -23,7 +23,7 @@
         <h2 class="login-title mt-2">Login</h2>
       </div>
 
-      <!-- Formulário com v-form -->
+      <!-- Formulário -->
       <v-form ref="form">
         <v-text-field
           label="Email"
@@ -39,8 +39,6 @@
           label="Senha"
           type="password"
           v-model="data.password1.value.value"
-          :error="!!errors.password1"
-          :error-messages="errors.password1"
           prepend-inner-icon="mdi-lock"
           variant="outlined"
           class="input-custom"
@@ -52,8 +50,8 @@
           block
           rounded="4"
           size="large"
-          :loading="userStore.loading"
-          @click="onSubmit()"
+          :loading="loading"
+          @click="onSubmit"
         >
           Entrar
         </v-btn>
@@ -80,35 +78,43 @@ import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import logoImage from "../assets/logo.jpg";
 
-// Composable e Store
+// Serviços
+import { authService } from "../service/auth.service";
+
+// Composables e store
 import { useUserData } from "../composables";
 import { useUserStore } from "../store";
 
+// Inicializações
 const router = useRouter();
-const imageURL = logoImage;
-
-// Store
 const userStore = useUserStore();
-
-// Composable
+const imageURL = logoImage;
 const { data, handleSubmit, errors, resetForm } = useUserData();
-
-// Ref do v-form
 const form = ref();
+const loading = ref(false);
 
-// Função de envio igual ao onSubmit do registro
+/**
+ * Função de login usando o authService
+ */
 const onSubmit = handleSubmit(async (values: any) => {
+  loading.value = true;
+
   try {
-    userStore.user = {
-      username: values.email.split("@")[0],
+    // 1️⃣ Chama o serviço de autenticação
+    const user = await authService.login({
       email: values.email,
-      password1: values.password,
-      password2: values.password,
-    };
-    alert("Login simulado com sucesso!");
+      password: values.password1,
+    });
+
+    // 2️⃣ Armazena na store global
+    userStore.user = user;
+
+    // 3️⃣ Redireciona para o dashboard
     router.push("/dashboard");
   } catch (err: any) {
     alert(err.message || "Erro ao fazer login");
+  } finally {
+    loading.value = false;
   }
 });
 

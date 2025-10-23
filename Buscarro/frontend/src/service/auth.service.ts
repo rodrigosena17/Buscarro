@@ -1,4 +1,4 @@
-import { userService } from "./userService";
+import { userService } from "./user.service";
 
 interface LoginData {
   email: string;
@@ -9,7 +9,7 @@ export const authService = {
   async login({ email, password }: LoginData) {
     try {
       // 1️⃣ Busca todos os usuários
-      const users = await userService.getUserInfo("");
+      const users = await userService.getUserInfo();
 
       // 2️⃣ Garante que seja uma lista
       const userList = Array.isArray(users) ? users : [users];
