@@ -104,6 +104,8 @@ export const useUserStore = defineStore("user", {
       } finally {
         this.loading = false;
       }
+
+        console.log(username, password1);
     },
     logout() {
       this.user = null;

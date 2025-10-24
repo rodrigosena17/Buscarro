@@ -49,9 +49,10 @@
           class="login-btn mt-6"
           block
           rounded="4"
+          type="button"
           size="large"
-          :loading="loading"
           @click="onSubmit"
+          :loading="userStore.loading"
         >
           Entrar
         </v-btn>
@@ -79,14 +80,14 @@ import { useRouter } from "vue-router";
 import logoImage from "../assets/logo.jpg";
 
 // Composables e store
-import { useUserData } from "../composables";
+import { useLoginData } from "../composables";
 import { useUserStore } from "../store";
 
 // Inicializações
 const router = useRouter();
 const userStore = useUserStore();
 const imageURL = logoImage;
-const { data, handleSubmit, errors, resetForm } = useUserData();
+const { data, handleSubmit, errors, resetForm } = useLoginData();
 const form = ref();
 const loading = ref(false);
 
@@ -98,7 +99,7 @@ const onSubmit = handleSubmit(async (values: any) => {
 
   try {
     // 1️⃣ Chama a store que faz o login e salva tokens
-    await userStore.login(values.email, values.password1);
+    await userStore.login(values.username, values.password1);
 
     // 2️⃣ Redireciona o usuário logado
     router.push("/home");
