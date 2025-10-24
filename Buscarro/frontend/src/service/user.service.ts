@@ -44,9 +44,9 @@ export const userService = {
     }
   },
 
-  async login(username: string, password1: string) {
+  async login(username: string, password: string) {
     try {
-      const response = await api.post(`api/login/`, { username, password1 });
+      const response = await api.post(`api/login/`, { username, password });
       const { access, refresh, user } = response.data;
 
       // Armazena tokens e usuário
