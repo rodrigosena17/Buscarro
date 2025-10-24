@@ -27,9 +27,9 @@
       <v-form ref="form">
         <v-text-field
           label="Email"
-          v-model="data.email.value.value"
-          :error="!!errors.email"
-          :error-messages="errors.email"
+          v-model="data.username.value.value"
+          :error="!!errors.username"
+          :error-messages="errors.username"
           prepend-inner-icon="mdi-email-outline"
           variant="outlined"
           class="input-custom"
@@ -78,9 +78,6 @@ import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import logoImage from "../assets/logo.jpg";
 
-// Serviços
-import { authService } from "../service/auth.service";
-
 // Composables e store
 import { useUserData } from "../composables";
 import { useUserStore } from "../store";
@@ -94,25 +91,20 @@ const form = ref();
 const loading = ref(false);
 
 /**
- * Função de login usando o authService
+ * 🔐 Função de login usando a store global do Pinia
  */
 const onSubmit = handleSubmit(async (values: any) => {
   loading.value = true;
 
   try {
-    // 1️⃣ Chama o serviço de autenticação
-    const user = await authService.login({
-      email: values.email,
-      password: values.password1,
-    });
+    // 1️⃣ Chama a store que faz o login e salva tokens
+    await userStore.login(values.email, values.password1);
 
-    // 2️⃣ Armazena na store global
-    userStore.user = user;
-
-    // 3️⃣ Redireciona para o dashboard
-    router.push("/dashboard");
+    // 2️⃣ Redireciona o usuário logado
+    router.push("/home");
   } catch (err: any) {
-    alert(err.message || "Erro ao fazer login");
+    // 3️⃣ Mostra erro, vindo da store
+    alert(userStore.error || "Erro ao fazer login");
   } finally {
     loading.value = false;
   }
