@@ -10,7 +10,6 @@
       elevation="16"
       color="#ffffff"
     >
-    {{errors}}
       <!-- Logo centralizada -->
       <div class="text-center mb-6">
         <v-img
@@ -27,7 +26,7 @@
       <!-- Formulário -->
       <v-form ref="form">
         <v-text-field
-          label="Email"
+          label="Username"
           v-model="data.username.value.value"
           :error="!!errors.username"
           :error-messages="errors.username"

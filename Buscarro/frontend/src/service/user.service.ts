@@ -30,7 +30,6 @@ export const userService = {
       const response = await api.put(`${API_URL}info/`, updatedData);
       return response.data;
     } catch (error: any) {
-      console.error("Erro ao atualizar usuário:", error);
       throw error.response?.data || error;
     }
   },
@@ -45,17 +44,14 @@ export const userService = {
   },
 
   async login(username: string, password: string) {
-    console.log("Iniciando login para:", username);
-    console.log("senha: ", password)
-      const response = await api.post(`api/login/`, { username, password });
-      console.log("Resposta do login:", response.data);
-      const { access, refresh, user } = response.data;
+    const response = await api.post(`api/login/`, { username, password });
+    const { access, refresh, user } = response.data;
 
-      // Armazena tokens e usuário
-      localStorage.setItem("access_token", access);
-      localStorage.setItem("refresh_token", refresh);
-      localStorage.setItem("loggedUser", JSON.stringify(user));
+    // Armazena tokens e usuário
+    localStorage.setItem("access_token", access);
+    localStorage.setItem("refresh_token", refresh);
+    localStorage.setItem("loggedUser", JSON.stringify(user));
 
-      return user;
+    return user;
   },
 };
