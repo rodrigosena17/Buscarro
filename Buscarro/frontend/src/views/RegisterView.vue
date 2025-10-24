@@ -118,7 +118,7 @@ const form = ref();
 const onSubmit = handleSubmit(async (values: any) => {
   const body = { ...values };
   await userStore.registerUser(body);
-  router.push("/login");
+  router.push("/");
   return alert("Usuário criado!");
 });
 

@@ -37,25 +37,30 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, ref } from "vue";
+import { defineComponent, ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
-import { authService } from "../service/auth.service";
 
 export default defineComponent({
   name: "HomeView",
   setup() {
     const router = useRouter();
-    const user = ref(authService.getLoggedUser());
+    const user = ref<any>(null);
 
+    // Quando a tela é montada
     onMounted(() => {
-      if (!authService.isAuthenticated()) {
-        router.push("/login");
+      const storedUser = localStorage.getItem("access_token");
+
+      if (storedUser) {
+        user.value = JSON.parse(storedUser);
+      } else {
+        router.push("/");
       }
     });
 
+    // Função de logout
     const handleLogout = () => {
-      authService.logout();
-      router.push("/login");
+      localStorage.removeItem("user");
+      router.push("/");
     };
 
     return { user, handleLogout };
