@@ -12,7 +12,7 @@ export function useLoginData() {
 
   const data = {
     username: useField<string>("username", loginSchema),
-    password: useField<string>("password1", loginSchema),
+    password: useField<string>("password", loginSchema),
   };
 
   return {

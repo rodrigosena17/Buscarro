@@ -45,8 +45,10 @@ export const userService = {
   },
 
   async login(username: string, password: string) {
-    try {
+    console.log("Iniciando login para:", username);
+    console.log("senha: ", password)
       const response = await api.post(`api/login/`, { username, password });
+      console.log("Resposta do login:", response.data);
       const { access, refresh, user } = response.data;
 
       // Armazena tokens e usuário
@@ -55,9 +57,5 @@ export const userService = {
       localStorage.setItem("loggedUser", JSON.stringify(user));
 
       return user;
-    } catch (error: any) {
-      console.error("Erro ao realizar login:", error);
-      throw error.response?.data || error;
-    }
   },
 };

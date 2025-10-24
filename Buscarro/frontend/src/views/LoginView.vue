@@ -10,6 +10,7 @@
       elevation="16"
       color="#ffffff"
     >
+    {{errors}}
       <!-- Logo centralizada -->
       <div class="text-center mb-6">
         <v-img
@@ -99,7 +100,7 @@ const onSubmit = handleSubmit(async (values: any) => {
 
   try {
     // 1️⃣ Chama a store que faz o login e salva tokens
-    await userStore.login(values.username, values.password1);
+    await userStore.login(values.username, values.password);
 
     // 2️⃣ Redireciona o usuário logado
     router.push("/home");
