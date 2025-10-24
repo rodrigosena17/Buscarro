@@ -13,10 +13,10 @@ export function useUserData() {
   });
 
   const data = {
-    username: useField<string>("username"),
-    email: useField<string>("email"),
-    password1: useField<string>("password1"),
-    password2: useField<string>("password2"),
+    username: useField<string>("username", createUserSchema),
+    email: useField<string>("email", createUserSchema),
+    password1: useField<string>("password1", createUserSchema),
+    password2: useField<string>("password2", createUserSchema),
   };
 
   return {

@@ -38,7 +38,7 @@
         <v-text-field
           label="Senha"
           type="password"
-          v-model="data.password1.value.value"
+          v-model="data.password.value.value"
           prepend-inner-icon="mdi-lock"
           variant="outlined"
           class="input-custom"
