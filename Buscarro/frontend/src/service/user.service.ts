@@ -1,12 +1,13 @@
-import axios from "axios";
+// src/services/userService.ts
+import api from "../api.config";
 import { type ICreateUser } from "../schemas/user.schema";
 
 const API_URL = "/api/users/";
 
 export const userService = {
-  async createUser(user: ICreateUser) {
+  async create(user: ICreateUser) {
     try {
-      const response = await axios.post(`${API_URL}register/`, user);
+      const response = await api.post(`${API_URL}register/`, user);
       return response.data;
     } catch (error: any) {
       console.error("Erro ao criar usuário:", error);
@@ -14,9 +15,9 @@ export const userService = {
     }
   },
 
-  async getUserInfo() {
+  async getCurrenteUserInfo() {
     try {
-      const response = await axios.get(`${API_URL}info/`);
+      const response = await api.get(`${API_URL}info/`);
       return response.data;
     } catch (error: any) {
       console.error("Erro ao buscar informações do usuário:", error);
@@ -24,42 +25,33 @@ export const userService = {
     }
   },
 
-  async updateUser(token: string, updatedData: Partial<ICreateUser>) {
+  async update(updatedData: Partial<ICreateUser>) {
     try {
-      const response = await axios.put(`${API_URL}info/`, updatedData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await api.put(`${API_URL}info/`, updatedData);
       return response.data;
     } catch (error: any) {
-      console.error("Erro ao atualizar usuário:", error);
       throw error.response?.data || error;
     }
   },
 
-  /**
-   * Lógica de login simulada, já que o backend não tem rota /login
-   */
-  async login(email: string, password: string) {
-    const users = await this.getUserInfo();
-    const userList = Array.isArray(users) ? users : [users];
-
-    const foundUser = userList.find(
-      (u: any) => u.email === email && u.password === password
-    );
-
-    if (!foundUser) {
-      throw new Error("Email ou senha incorretos");
+  async delete(id: string) {
+    try {
+      const response = await api.delete(`${API_URL}delete/${id}`);
+      return response;
+    } catch (err) {
+      console.log("erro ao deleter o usuário");
     }
+  },
 
-    // Gera um token falso só pra simular sessão
-    const fakeToken = btoa(`${foundUser.email}:${foundUser.password}`);
+  async login(username: string, password: string) {
+    const response = await api.post(`api/login/`, { username, password });
+    const { access, refresh, user } = response.data;
 
-    // Salva localmente
-    localStorage.setItem("token", fakeToken);
-    localStorage.setItem("loggedUser", JSON.stringify(foundUser));
+    // Armazena tokens e usuário
+    localStorage.setItem("access_token", access);
+    localStorage.setItem("refresh_token", refresh);
+    localStorage.setItem("loggedUser", JSON.stringify(user));
 
-    return foundUser;
+    return user;
   },
 };

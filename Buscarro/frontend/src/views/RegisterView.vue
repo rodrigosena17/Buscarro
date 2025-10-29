@@ -24,7 +24,7 @@
       <!-- Formulário com v-form -->
       <v-form ref="form">
         <v-text-field
-          label="Nome completo"
+          label="Username"
           v-model="data.username.value.value"
           :error="!!errors.username"
           :error-messages="errors.username"
