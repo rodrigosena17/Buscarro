@@ -94,7 +94,8 @@ const onSubmit = handleSubmit(async (values: any) => {
     await userStore.login(values.username, values.password);
 
     // 2️⃣ Redireciona o usuário logado
-    router.push("/home");
+    router.push("/HomeView");
+    toast.success("Usuário logado");
   } catch (err: any) {
     console.log(err);
   } finally {
