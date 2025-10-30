@@ -1,8 +1,24 @@
 <template>
   <v-app>
-    <router-view />
+    <HeaderApp v-if="showHeader" />
+    <v-main>
+      <router-view />
+    </v-main>
   </v-app>
 </template>
+
+<script setup lang="ts">
+import { computed } from "vue";
+import { useRoute } from "vue-router";
+import HeaderApp from "./components/HeaderApp.vue";
+
+const route = useRoute();
+
+const showHeader = computed(() => {
+  const authRoutes = ["Login", "Register"];
+  return route.name && !authRoutes.includes(String(route.name));
+});
+</script>
 
 <style scoped>
 .logo {

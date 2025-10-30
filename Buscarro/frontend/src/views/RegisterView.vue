@@ -9,7 +9,7 @@
       elevation="16"
       color="#ffffff"
     >
-      <div class="text-center mb-6">
+      <div class="text-left mb-6">
         <v-img
           :src="imageURL"
           alt="Logo"
@@ -78,11 +78,9 @@
         </v-btn>
       </v-form>
 
-      <v-divider class="my-6"></v-divider>
-
       <v-btn
-        variant="outlined"
-        class="back-btn py-4 text-h6"
+        variant="text"
+        class="back-btn py-4 text-h6 mt-10"
         block
         rounded="4"
         @click="router.push('/')"
@@ -118,7 +116,6 @@ const form = ref();
 const onSubmit = handleSubmit(async (values: any) => {
   const body = { ...values };
   await userStore.registerUser(body);
-  return alert("Usuário criado!");
 });
 
 onMounted(() => {
@@ -136,7 +133,6 @@ onMounted(() => {
 
 .v-card {
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1) !important;
-  border: 1px solid rgba(33, 150, 243, 0.3);
 }
 
 .logo-img {
@@ -145,7 +141,6 @@ onMounted(() => {
 }
 
 .login-title {
-  font-family: "Montserrat", sans-serif;
   color: #1976d2;
   font-weight: 600;
   font-size: 1.6rem;
@@ -178,7 +173,6 @@ onMounted(() => {
   font-weight: 600;
   letter-spacing: 0.5px;
   transition: all 0.3s ease;
-  border-radius: 6px;
   border: none;
 }
 
@@ -190,9 +184,7 @@ onMounted(() => {
 
 .back-btn {
   color: #1565c0 !important;
-  border: 1px solid #1976d2 !important;
   transition: all 0.3s ease;
-  border-radius: 6px;
 }
 
 .back-btn:hover {

@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { userService } from "../service/user.service";
 import type { ICreateUser } from "../schemas/user.schema";
+import { useToast } from "vue-toastification";
 
 export const useUserStore = defineStore("user", {
   state: () => ({
@@ -16,6 +17,7 @@ export const useUserStore = defineStore("user", {
 
   actions: {
     async registerUser(userData: ICreateUser) {
+      const toast = useToast();
       this.loading = true;
       this.error = null;
       try {
@@ -23,9 +25,10 @@ export const useUserStore = defineStore("user", {
         this.user = data.user || userData;
         this.token = data.token || "";
         if (this.token) localStorage.setItem("token", this.token);
+        toast.success("Usuário criado");
         return data;
       } catch (err: any) {
-        this.error = err.message || "Erro ao registrar usuário";
+        toast.error("Erro ao tentar registrar");
         throw err;
       } finally {
         this.loading = false;
@@ -33,6 +36,7 @@ export const useUserStore = defineStore("user", {
     },
 
     async fetchUserInfo() {
+      const toast = useToast();
       if (!this.token) return;
       this.loading = true;
       this.error = null;
@@ -40,7 +44,7 @@ export const useUserStore = defineStore("user", {
         const data = await userService.getCurrenteUserInfo();
         this.user = data;
       } catch (err: any) {
-        this.error = err.message || "Erro ao buscar informações do usuário";
+        toast.error("Erro ao buscar informações do usuário");
         this.logout();
       } finally {
         this.loading = false;
@@ -48,12 +52,14 @@ export const useUserStore = defineStore("user", {
     },
 
     async updateUser(updatedData: Partial<ICreateUser>) {
+      const toast = useToast();
       if (!this.token) return;
       this.loading = true;
       this.error = null;
       try {
         const data = await userService.update(updatedData);
         this.user = { ...this.user, ...data };
+        toast.success("Usuário atualizado");
         return data;
       } catch (err: any) {
         this.error = err.message || "Erro ao atualizar usuário";
@@ -64,11 +70,13 @@ export const useUserStore = defineStore("user", {
     },
 
     async deleteUser() {
+      const toast = useToast();
       if (!this.token) return;
       this.loading = true;
       this.error = null;
       try {
         await userService.delete(this.token);
+        toast.success("Usuário deletado");
         this.logout();
       } catch (err: any) {
         this.error = err.message || "Erro ao excluir usuário";
@@ -79,6 +87,7 @@ export const useUserStore = defineStore("user", {
     },
 
     async login(username: string, password1: string) {
+      const toast = useToast();
       this.loading = true;
       this.error = null;
 
@@ -96,7 +105,7 @@ export const useUserStore = defineStore("user", {
         // Garante que os tokens fiquem sincronizados
         if (accessToken) localStorage.setItem("access_token", accessToken);
         if (refreshToken) localStorage.setItem("refresh_token", refreshToken);
-
+        toast.success("Login efetuado com sucesso");
         return user;
       } catch (err: any) {
         this.error = err.message || "Erro ao realizar login";
@@ -105,7 +114,7 @@ export const useUserStore = defineStore("user", {
         this.loading = false;
       }
 
-        console.log(username, password1);
+      console.log(username, password1);
     },
     logout() {
       this.user = null;

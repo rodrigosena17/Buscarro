@@ -4,14 +4,9 @@
     fluid
     class="fill-height d-flex align-center justify-center login-background"
   >
-    <v-card
-      class="pa-10 rounded-md shadow-md"
-      width="600"
-      elevation="16"
-      color="#ffffff"
-    >
+    <v-card class="pa-10 rounded-md shadow-md" width="600" color="#ffffff">
       <!-- Logo centralizada -->
-      <div class="text-center mb-6">
+      <div class="text-left mb-6">
         <v-img
           :src="imageURL"
           alt="Logo"
@@ -58,12 +53,10 @@
         </v-btn>
       </v-form>
 
-      <v-divider class="my-6"></v-divider>
-
       <!-- Botão Criar conta -->
       <v-btn
-        variant="outlined"
-        class="register-btn py-4 text-h6"
+        variant="text"
+        class="register-btn py-4 text-h6 mt-10"
         block
         rounded="4"
         @click="$router.push('/register')"
@@ -82,6 +75,7 @@ import logoImage from "../assets/logo.jpg";
 // Composables e store
 import { useLoginData } from "../composables";
 import { useUserStore } from "../store";
+import { useToast } from "vue-toastification";
 
 // Inicializações
 const router = useRouter();
@@ -90,10 +84,8 @@ const imageURL = logoImage;
 const { data, handleSubmit, errors, resetForm } = useLoginData();
 const form = ref();
 const loading = ref(false);
+const toast = useToast();
 
-/**
- * 🔐 Função de login usando a store global do Pinia
- */
 const onSubmit = handleSubmit(async (values: any) => {
   loading.value = true;
 
@@ -104,8 +96,7 @@ const onSubmit = handleSubmit(async (values: any) => {
     // 2️⃣ Redireciona o usuário logado
     router.push("/home");
   } catch (err: any) {
-    // 3️⃣ Mostra erro, vindo da store
-    alert(userStore.error || "Erro ao fazer login");
+    console.log(err);
   } finally {
     loading.value = false;
   }
@@ -126,7 +117,6 @@ onMounted(() => {
 
 .v-card {
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1) !important;
-  border: 1px solid rgba(33, 150, 243, 0.3);
 }
 
 .logo-img {
@@ -135,7 +125,6 @@ onMounted(() => {
 }
 
 .login-title {
-  font-family: "Montserrat", sans-serif;
   color: #1976d2;
   font-weight: 600;
   font-size: 1.6rem;
@@ -180,9 +169,7 @@ onMounted(() => {
 
 .register-btn {
   color: #1565c0 !important;
-  border: 1px solid #1976d2 !important;
   transition: all 0.3s ease;
-  border-radius: 6px;
 }
 
 .register-btn:hover {
