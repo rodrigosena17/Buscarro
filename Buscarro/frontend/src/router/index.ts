@@ -7,28 +7,24 @@ import ProfileView from "../views/ProfileView.vue";
 const routes = [
   {
     path: "/",
-    name: "Login", // Use PascalCase para nomes de rotas para consistência
+    name: "Login",
     component: LoginView,
     meta: {
-      // Usamos 'hideHeader: true' para indicar que o HeaderApp deve ser ocultado
       hideHeader: true,
     },
   },
   {
     path: "/register",
-    name: "Register", // Use PascalCase
+    name: "Register",
     component: RegisterView,
     meta: {
-      // Ocultar o HeaderApp também na página de Registro
       hideHeader: true,
     },
   },
-  // ** IMPORTANTE: Adicione suas rotas autenticadas aqui (Home, Perfil, Motos, Carros) **
   {
     path: "/home",
-    name: "Home",
-    component: HomeView, // Exemplo de rota autenticada
-    // Não precisa de 'meta: { hideHeader: false }', pois o padrão é false
+    name: "HomeView",
+    component: HomeView,
   },
   {
     path: "/perfil",
