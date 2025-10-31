@@ -4,10 +4,9 @@
     class="fill-height d-flex align-center justify-center home-background"
   >
     <v-card
-      class="pa-10 rounded-xl shadow-xl text-center"
+      class="pa-10 rounded-xl shadow-xl text-center home-card"
       width="600"
       elevation="16"
-      color="#1E1E1E"
     >
       <v-img
         src="@/assets/logo.jpg"
@@ -15,23 +14,15 @@
         max-width="150"
         class="mx-auto mb-6"
         contain
-      ></v-img>
+      />
 
-      <h1 class="text-h4 font-weight-bold mb-4" style="color: #ffffff">
-        Bem-vindo, {{ user?.name || "Usuário" }}!
+      <h1 class="text-h5 font-weight-bold mb-2 title-text">
+        Olá, {{ user?.username || "Usuário" }} 👋
       </h1>
 
-      <p class="text-body-1 mb-8" style="color: #bdbdbd">
-        Você está autenticado no sistema. Aqui será sua tela inicial.
+      <p class="text-body-1 mb-6 subtitle-text">
+        Bem-vindo(a)! Você está logado no sistema.
       </p>
-
-      <v-btn
-        color="#00ACC1"
-        class="px-8 py-4 rounded-lg text-body-1 font-weight-bold"
-        @click="handleLogout"
-      >
-        Sair
-      </v-btn>
     </v-card>
   </v-container>
 </template>
@@ -46,10 +37,8 @@ export default defineComponent({
     const router = useRouter();
     const user = ref<any>(null);
 
-    // Quando a tela é montada
     onMounted(() => {
-      const storedUser = localStorage.getItem("access_token");
-
+      const storedUser = localStorage.getItem("loggedUser");
       if (storedUser) {
         user.value = JSON.parse(storedUser);
       } else {
@@ -57,20 +46,26 @@ export default defineComponent({
       }
     });
 
-    // Função de logout
-    const handleLogout = () => {
-      localStorage.removeItem("user");
-      router.push("/");
-    };
-
-    return { user, handleLogout };
+    return { user };
   },
 });
 </script>
 
 <style scoped>
 .home-background {
-  background-color: #121212;
-  color: #ffffff;
+  background: linear-gradient(135deg, #f0f4f8 0%, #ffffff 50%, #f0f4f8 100%);
+}
+
+.home-card {
+  background-color: #ffffff !important;
+  border-radius: 14px;
+}
+
+.title-text {
+  color: #1976d2;
+}
+
+.subtitle-text {
+  color: #555;
 }
 </style>

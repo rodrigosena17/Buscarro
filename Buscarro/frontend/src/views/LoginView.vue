@@ -75,7 +75,6 @@ import logoImage from "../assets/logo.jpg";
 // Composables e store
 import { useLoginData } from "../composables";
 import { useUserStore } from "../store";
-import { useToast } from "vue-toastification";
 
 // Inicializações
 const router = useRouter();
@@ -84,7 +83,6 @@ const imageURL = logoImage;
 const { data, handleSubmit, errors, resetForm } = useLoginData();
 const form = ref();
 const loading = ref(false);
-const toast = useToast();
 
 const onSubmit = handleSubmit(async (values: any) => {
   loading.value = true;
