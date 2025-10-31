@@ -1,4 +1,3 @@
-// src/services/userService.ts
 import api from "../api.config";
 import { type ICreateUser } from "../schemas/user.schema";
 
@@ -34,17 +33,18 @@ export const userService = {
     }
   },
 
-  async delete(id: string) {
+  async deleteById(id: string) {
     try {
-      const response = await api.delete(`${API_URL}delete/${id}`);
-      return response;
-    } catch (err) {
-      console.log("erro ao deleter o usuário");
+      const response = await api.delete(`${API_URL}delete/`, { data: { id } });
+      return response.data;
+    } catch (err: any) {
+      console.error("Erro ao deletar o usuário por id:", err);
+      throw err.response?.data || err;
     }
   },
 
   async login(username: string, password: string) {
-    const response = await api.post(`api/login/`, { username, password });
+    const response = await api.post(`/api/login/`, { username, password });
     const { access, refresh, user } = response.data;
 
     // Armazena tokens e usuário

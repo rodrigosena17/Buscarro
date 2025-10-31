@@ -2,10 +2,11 @@ import { defineStore } from "pinia";
 import { userService } from "../service/user.service";
 import type { ICreateUser } from "../schemas/user.schema";
 import { useToast } from "vue-toastification";
+import type { IGetUser } from "../types";
 
 export const useUserStore = defineStore("user", {
   state: () => ({
-    user: null as ICreateUser | null,
+    user: {} as IGetUser,
     token: localStorage.getItem("access_token") || "",
     loading: false,
     error: "" as string | null,
@@ -24,7 +25,7 @@ export const useUserStore = defineStore("user", {
         const data = await userService.create(userData);
         this.user = data.user || userData;
         this.token = data.token || "";
-        if (this.token) localStorage.setItem("token", this.token);
+        if (this.token) localStorage.setItem("access_token", this.token);
         toast.success("Usuário criado");
         return data;
       } catch (err: any) {
@@ -69,13 +70,15 @@ export const useUserStore = defineStore("user", {
       }
     },
 
-    async deleteUser() {
+    // trecho do store: actions
+    async deleteUser(id: string) {
       const toast = useToast();
       if (!this.token) return;
       this.loading = true;
       this.error = null;
       try {
-        await userService.delete(this.token);
+        // chama o service sem passar token como id
+        await userService.deleteById(id);
         toast.success("Usuário deletado");
         this.logout();
       } catch (err: any) {
@@ -84,6 +87,14 @@ export const useUserStore = defineStore("user", {
       } finally {
         this.loading = false;
       }
+    },
+
+    logout() {
+      this.user = {} as IGetUser;
+      this.token = "";
+      localStorage.removeItem("access_token");
+      localStorage.removeItem("refresh_token");
+      localStorage.removeItem("loggedUser");
     },
 
     async login(username: string, password1: string) {
@@ -113,13 +124,6 @@ export const useUserStore = defineStore("user", {
       } finally {
         this.loading = false;
       }
-
-      console.log(username, password1);
-    },
-    logout() {
-      this.user = null;
-      this.token = "";
-      localStorage.removeItem("token");
     },
   },
 });

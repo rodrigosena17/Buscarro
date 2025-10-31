@@ -1,6 +1,4 @@
-import type { ICreateUser } from "./ICreateUser";
-
-export interface IGetUser extends ICreateUser {
+export interface IGetUser {
   id: string;
   username: string;
   email: string;

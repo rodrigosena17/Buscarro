@@ -95,7 +95,6 @@ const onSubmit = handleSubmit(async (values: any) => {
 
     // 2️⃣ Redireciona o usuário logado
     router.push("/Home");
-    toast.success("Usuário logado");
   } catch (err: any) {
     console.log(err);
   } finally {
