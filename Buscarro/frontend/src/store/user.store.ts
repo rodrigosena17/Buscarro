@@ -2,11 +2,12 @@ import { defineStore } from "pinia";
 import { userService } from "../service/user.service";
 import type { ICreateUser } from "../schemas/user.schema";
 import { useToast } from "vue-toastification";
-import type { IGetUser } from "../types";
+import type { IGetUser, IUpdateUser } from "../types";
 
 export const useUserStore = defineStore("user", {
   state: () => ({
     user: {} as IGetUser,
+    currentUserId: "",
     token: localStorage.getItem("access_token") || "",
     loading: false,
     error: "" as string | null,
@@ -28,9 +29,9 @@ export const useUserStore = defineStore("user", {
         if (this.token) localStorage.setItem("access_token", this.token);
         toast.success("Usuário criado");
         return data;
-      } catch (err: any) {
-        toast.error("Erro ao tentar registrar");
-        throw err;
+      } catch (error: any) {
+        toast.error(`Usuário existente, tente outro Username`);
+        throw error;
       } finally {
         this.loading = false;
       }
@@ -52,15 +53,19 @@ export const useUserStore = defineStore("user", {
       }
     },
 
-    async updateUser(updatedData: Partial<ICreateUser>) {
-      const toast = useToast();
+    async updateUser(updatedData: IUpdateUser) {
       if (!this.token) return;
       this.loading = true;
       this.error = null;
       try {
         const data = await userService.update(updatedData);
-        this.user = { ...this.user, ...data };
-        toast.success("Usuário atualizado");
+
+        // Se o backend retorna o usuário atualizado direto:
+        this.user = data;
+
+        // Se o backend retorna um objeto { user: {...} }:
+        // this.user = data.user || data;
+
         return data;
       } catch (err: any) {
         this.error = err.message || "Erro ao atualizar usuário";
@@ -98,7 +103,6 @@ export const useUserStore = defineStore("user", {
     },
 
     async login(username: string, password1: string) {
-      const toast = useToast();
       this.loading = true;
       this.error = null;
 
@@ -109,14 +113,14 @@ export const useUserStore = defineStore("user", {
         const accessToken = localStorage.getItem("access_token");
         const refreshToken = localStorage.getItem("refresh_token");
 
-        // Atualiza o estado da store
-        this.user = user;
         this.token = accessToken || "";
 
         // Garante que os tokens fiquem sincronizados
         if (accessToken) localStorage.setItem("access_token", accessToken);
         if (refreshToken) localStorage.setItem("refresh_token", refreshToken);
-        toast.success("Login efetuado com sucesso");
+
+        this.fetchUserInfo();
+
         return user;
       } catch (err: any) {
         this.error = err.message || "Erro ao realizar login";

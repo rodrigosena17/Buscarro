@@ -1,7 +1,8 @@
 export interface IGetUser {
+  email: string;
+  first_name: string | null;
   id: string;
   username: string;
-  email: string;
-  password1: string;
-  password2: string;
+  password: string;
+  last_name: string | null;
 }

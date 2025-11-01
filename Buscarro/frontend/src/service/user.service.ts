@@ -1,6 +1,7 @@
 import api from "../api.config";
 import { type ICreateUser } from "../schemas/user.schema";
-
+import type { IUpdateUser } from "../types";
+import { useToast } from "vue-toastification";
 const API_URL = "/api/users/";
 
 export const userService = {
@@ -9,7 +10,10 @@ export const userService = {
       const response = await api.post(`${API_URL}register/`, user);
       return response.data;
     } catch (error: any) {
-      console.error("Erro ao criar usuário:", error);
+      if (error.request.response) {
+        const toast = useToast();
+        toast.error("Senha muito comum");
+      }
       throw error.response?.data || error;
     }
   },
@@ -24,11 +28,14 @@ export const userService = {
     }
   },
 
-  async update(updatedData: Partial<ICreateUser>) {
+  async update(updatedData: IUpdateUser) {
     try {
       const response = await api.put(`${API_URL}info/`, updatedData);
-      return response.data;
+      const toast = useToast();
+      toast.success("Usuário atualizado com sucesso!");
+      return response.data; // <- Retorna o objeto do backend
     } catch (error: any) {
+      console.error("Erro ao atualizar usuário:", error);
       throw error.response?.data || error;
     }
   },
@@ -45,13 +52,10 @@ export const userService = {
 
   async login(username: string, password: string) {
     const response = await api.post(`/api/login/`, { username, password });
-    const { access, refresh, user } = response.data;
+    const { access, refresh } = response.data;
 
     // Armazena tokens e usuário
     localStorage.setItem("access_token", access);
     localStorage.setItem("refresh_token", refresh);
-    localStorage.setItem("loggedUser", JSON.stringify(user));
-
-    return user;
   },
 };

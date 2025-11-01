@@ -14,7 +14,7 @@
         </div>
       </div>
 
-      <v-form @submit.prevent="handleSubmit(handleSave)">
+      <v-form>
         <v-row>
           <v-col cols="12" md="6">
             <v-text-field
@@ -42,55 +42,93 @@
 
           <v-col cols="12" md="6">
             <v-text-field
-              label="Nova Senha"
-              v-model="data.password1.value.value"
-              :error-messages="data.password1.errorMessage.value"
-              prepend-inner-icon="mdi-lock-outline"
+              label="Primeiro nome"
+              v-model="data.first_name.value.value"
+              :error-messages="data.first_name.errorMessage.value"
               variant="outlined"
-              type="password"
               class="input-custom"
               :readonly="!isEditing"
-              hint="Preencha apenas para alterar a senha."
-              persistent-hint
             />
           </v-col>
 
           <v-col cols="12" md="6">
             <v-text-field
-              label="Confirmar Senha"
-              v-model="data.password2.value.value"
-              :error-messages="data.password2.errorMessage.value"
-              prepend-inner-icon="mdi-lock-check-outline"
+              label="Segundo nome"
+              v-model="data.last_name.value.value"
+              :error-messages="data.last_name.errorMessage.value"
               variant="outlined"
-              type="password"
               class="input-custom"
               :readonly="!isEditing"
             />
           </v-col>
         </v-row>
 
-        <v-btn
-          class="action-btn-main mt-6"
-          block
-          rounded="4"
-          size="large"
-          :type="isEditing ? 'submit' : 'button'"
-          @click="isEditing ? null : enableEditMode()"
-          :loading="userStore.loading"
-        >
-          {{ isEditing ? "Salvar Alterações" : "Editar Informações" }}
-        </v-btn>
+        <!-- Novos botões de ação --><v-row class="mt-6">
+          <!-- Botão Editar (sempre visível quando não estiver editando) --><v-col
+            cols="12"
+            v-if="!isEditing"
+          >
+            <v-btn
+              class="action-btn-main"
+              block
+              rounded="4"
+              size="large"
+              @click="enableEditMode()"
+              :loading="userStore.loading"
+            >
+              <v-icon left>mdi-pencil</v-icon>
+              Editar Informações
+            </v-btn>
+          </v-col>
 
-        <v-btn
-          variant="text"
-          class="secondary-btn py-4 text-h6 mt-4"
-          block
-          rounded="4"
-          :color="isEditing ? 'blue-darken-2' : 'red-darken-2'"
-          @click="isEditing ? cancelEditMode() : (isDeleteModalOpen = true)"
-        >
-          {{ isEditing ? "Cancelar Edição" : "Excluir Conta" }}
-        </v-btn>
+          <!-- Botões Salvar e Cancelar (visíveis apenas no modo de edição) --><v-col
+            cols="12"
+            class="d-flex justify-space-between"
+            v-if="isEditing"
+          >
+            <v-btn
+              class="action-btn-save mr-2"
+              rounded="4"
+              size="large"
+              type="button"
+              @click="handleSave"
+              :loading="userStore.loading"
+            >
+              <v-icon left>mdi-content-save-outline</v-icon>
+              Salvar Alterações
+            </v-btn>
+            <v-btn
+              class="action-btn-cancel ml-2"
+              rounded="4"
+              size="large"
+              variant="outlined"
+              @click="cancelEditMode()"
+              :disabled="userStore.loading"
+            >
+              Cancelar
+            </v-btn>
+          </v-col>
+
+          <!-- Botão Excluir Conta (visível apenas quando não estiver editando) --><v-col
+            cols="12"
+            v-if="!isEditing"
+            class="mt-4"
+          >
+            <v-btn
+              class="action-btn-delete"
+              block
+              rounded="4"
+              size="large"
+              variant="outlined"
+              color="red-darken-2"
+              @click="isDeleteModalOpen = true"
+              :loading="userStore.loading"
+            >
+              <v-icon left>mdi-delete-outline</v-icon>
+              Excluir Conta
+            </v-btn>
+          </v-col>
+        </v-row>
       </v-form>
 
       <v-alert
@@ -136,84 +174,64 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch, computed } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { useUserStore } from "../store/";
-import { useUserData } from "../composables/user/useUserData";
+import { useUserUpdateData } from "../composables/user/";
 import { useRouter } from "vue-router";
-import type { ICreateUser } from "../schemas/user.schema";
+import type { IUpdateUser } from "../schemas";
 
 const router = useRouter();
 const userStore = useUserStore();
 const isEditing = ref(false);
 const isDeleteModalOpen = ref(false);
-const { data, handleSubmit, resetForm } = useUserData();
 
-const loadUserData = () => {
+const { data, handleSubmit, setValues, errors } = useUserUpdateData();
+
+const loadUserData = async () => {
+  await userStore.fetchUserInfo();
   const user = userStore.user;
-  if (!user) return;
-
-  data.username.value.value = user.username;
-  data.email.value.value = user.email;
-  data.password1.value.value = "";
-  data.password2.value.value = "";
+  if (user && user.username) {
+    // Note: setValues é necessário para carregar os dados no formulário
+    setValues(user as unknown as IUpdateUser);
+  } else {
+    console.error("Erro: Usuário não encontrado no Store após fetch.");
+  }
 };
-
-onMounted(() => {
-  if (!userStore.user) userStore.fetchUserInfo();
-  loadUserData();
+onMounted(async () => {
+  await loadUserData();
 });
-
-watch(
-  () => userStore.user,
-  (newUser) => newUser && loadUserData(),
-  { immediate: true }
-);
 
 const enableEditMode = () => (isEditing.value = true);
 
 const cancelEditMode = () => {
   isEditing.value = false;
-  loadUserData();
-  resetForm();
+  loadUserData(); // Recarrega os dados originais e reseta o formulário
 };
 
-const handleSave = async (values: ICreateUser) => {
-  const updatedData: any = {
-    username: values.username,
-    email: values.email,
-    id: userStore.user?.id,
-  };
-
-  if (values.password1) {
-    updatedData.password1 = values.password1;
-    updatedData.password2 = values.password2;
-  }
-
+const handleSave = handleSubmit(async (values: IUpdateUser) => {
   try {
-    await userStore.updateUser(updatedData);
+    await userStore.updateUser(values);
     isEditing.value = false;
-    data.password1.value.value = "";
-    data.password2.value.value = "";
+    await loadUserData(); // Recarrega dados do backend
   } catch (e) {
-    console.error(e);
+    console.error("Erro ao salvar:", e);
   }
-};
+});
 
 const handleDeleteUser = async () => {
   try {
-    await userStore.deleteUser(userStore.user?.id);
-    isDeleteModalOpen.value = false;
-    router.push("/");
+    const userId = userStore.user?.id;
+    if (userId) {
+      await userStore.deleteUser(userId);
+      isDeleteModalOpen.value = false;
+      router.push("/login");
+    }
   } catch (e) {
     console.error(e);
   }
 };
 
-const userAvatarLetter = computed(() =>
-  userStore.user?.username
-    ? userStore.user.username.charAt(0).toUpperCase()
-    : "U"
-);
+const userAvatarLetter = computed(() => userStore.user?.first_name?.charAt(0));
 </script>
 
 <style scoped>
@@ -245,12 +263,36 @@ const userAvatarLetter = computed(() =>
   background-color: #f4f4f4;
   opacity: 0.8;
 }
+
+/* Estilos para os novos botões */
 .action-btn-main {
   background: linear-gradient(90deg, #1976d2, #42a5f5);
   color: white !important;
   font-weight: 600;
 }
-.secondary-btn {
+
+.action-btn-save {
+  background: linear-gradient(90deg, #28a745, #4caf50); /* Verde para salvar */
+  color: white !important;
+  font-weight: 600;
+  flex-grow: 1; /* Faz o botão crescer para ocupar espaço disponível */
+}
+
+.action-btn-cancel {
+  color: #6c757d !important; /* Cinza para cancelar */
+  border-color: #6c757d !important;
+  font-weight: 600;
+  flex-grow: 1; /* Faz o botão crescer para ocupar espaço disponível */
+}
+
+.action-btn-delete {
   font-weight: 600 !important;
+  color: #dc3545 !important; /* Vermelho para excluir */
+  border-color: #dc3545 !important;
+}
+
+/* Mantenha o estilo para icones dentro de botões */
+.v-btn .v-icon {
+  margin-right: 8px; /* Espaçamento entre ícone e texto */
 }
 </style>

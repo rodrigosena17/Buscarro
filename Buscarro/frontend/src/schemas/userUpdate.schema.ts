@@ -1,7 +1,8 @@
 import * as yup from "yup";
 
-export const createUserSchema = yup
+export const updateUserSchema = yup
   .object({
+    id: yup.string().required("Id é obrigatório"),
     username: yup
       .string()
       .required("Nome de usuário é obrigatório")
@@ -14,15 +15,7 @@ export const createUserSchema = yup
       .string()
       .required("E-mail é obrigatório")
       .email("Informe um endereço de e-mail válido"),
-    password1: yup
-      .string()
-      .required("Senha é obrigatória")
-      .min(8, "A senha deve ter ao menos 8 caracteres"),
-    password2: yup
-      .string()
-      .required("Confirmação de senha é obrigatória")
-      .oneOf([yup.ref("password1")], "As senhas devem coincidir"),
   })
   .required();
 
-export type ICreateUser = yup.InferType<typeof createUserSchema>;
+export type IUpdateUser = yup.InferType<typeof updateUserSchema>;

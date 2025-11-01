@@ -71,7 +71,7 @@
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import logoImage from "../assets/logo.jpg";
-
+import { useToast } from "vue-toastification";
 // Composables e store
 import { useLoginData } from "../composables";
 import { useUserStore } from "../store";
@@ -83,6 +83,7 @@ const imageURL = logoImage;
 const { data, handleSubmit, errors, resetForm } = useLoginData();
 const form = ref();
 const loading = ref(false);
+const toasty = useToast();
 
 const onSubmit = handleSubmit(async (values: any) => {
   loading.value = true;
@@ -92,9 +93,9 @@ const onSubmit = handleSubmit(async (values: any) => {
     await userStore.login(values.username, values.password);
 
     // 2️⃣ Redireciona o usuário logado
-    router.push("/Home");
+    router.push("/");
   } catch (err: any) {
-    console.log(err);
+    toasty.error("Credenciais inválidas");
   } finally {
     loading.value = false;
   }

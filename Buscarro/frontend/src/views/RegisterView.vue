@@ -33,6 +33,23 @@
           class="input-custom"
         ></v-text-field>
 
+        <div class="d-flex ga-2">
+          <v-text-field
+            label="Primeiro nome"
+            v-model="data.first_name.value.value"
+            :error-messages="data.first_name.errorMessage.value"
+            variant="outlined"
+            class="input-custom"
+          ></v-text-field>
+          <v-text-field
+            label="Segundo nome"
+            v-model="data.last_name.value.value"
+            :error-messages="data.last_name.errorMessage.value"
+            variant="outlined"
+            class="input-custom"
+          ></v-text-field>
+        </div>
+
         <v-text-field
           label="Email"
           v-model="data.email.value.value"
@@ -83,7 +100,7 @@
         class="back-btn py-4 text-h6 mt-10"
         block
         rounded="4"
-        @click="router.push('/')"
+        @click="router.push('/login')"
       >
         Voltar ao Login
       </v-btn>
@@ -116,7 +133,7 @@ const form = ref();
 const onSubmit = handleSubmit(async (values: any) => {
   const body = { ...values };
   await userStore.registerUser(body);
-  router.push("/");
+  router.push("/login");
 });
 
 onMounted(() => {

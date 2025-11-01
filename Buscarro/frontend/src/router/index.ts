@@ -7,11 +7,8 @@ import ProfileView from "../views/ProfileView.vue";
 const routes = [
   {
     path: "/",
-    name: "Login",
-    component: LoginView,
-    meta: {
-      hideHeader: true,
-    },
+    name: "home",
+    component: HomeView,
   },
   {
     path: "/register",
@@ -22,9 +19,12 @@ const routes = [
     },
   },
   {
-    path: "/home",
-    name: "HomeView",
-    component: HomeView,
+    path: "/login",
+    name: "Login",
+    component: LoginView,
+    meta: {
+      hideHeader: true,
+    },
   },
   {
     path: "/perfil",

@@ -16,9 +16,7 @@
         contain
       />
 
-      <h1 class="text-h5 font-weight-bold mb-2 title-text">
-        Olá, {{ user?.username || "Usuário" }} 👋
-      </h1>
+      <h1 class="text-h5 font-weight-bold mb-2 title-text">Olá, usuário 👋</h1>
 
       <p class="text-body-1 mb-6 subtitle-text">
         Bem-vindo(a)! Você está logado no sistema.
@@ -28,26 +26,10 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted } from "vue";
-import { useRouter } from "vue-router";
+import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "HomeView",
-  setup() {
-    const router = useRouter();
-    const user = ref<any>(null);
-
-    onMounted(() => {
-      const storedUser = localStorage.getItem("loggedUser");
-      if (storedUser) {
-        user.value = JSON.parse(storedUser);
-      } else {
-        router.push("/");
-      }
-    });
-
-    return { user };
-  },
 });
 </script>
 

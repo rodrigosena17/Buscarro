@@ -6,7 +6,7 @@ from django.core.exceptions import ValidationError
 class UsuarioSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'first_name', 'last_name']
+        fields = ['id', 'username', 'email', 'first_name', 'last_name',]
         read_only_fields = ['id']
 
 class RegisterSerializer(serializers.Serializer):
@@ -14,6 +14,8 @@ class RegisterSerializer(serializers.Serializer):
     email = serializers.EmailField()
     password1 = serializers.CharField(write_only=True)
     password2 = serializers.CharField(write_only=True)
+    first_name = serializers.CharField(max_length=10)
+    last_name = serializers.CharField(max_length=10)
 
 
     def validate(self, data):
@@ -29,7 +31,10 @@ class RegisterSerializer(serializers.Serializer):
         user = User.objects.create_user(
             username=validated_data['username'],
             email=validated_data['email'],
-            password=validated_data['password1']
+            password=validated_data['password1'],
+            first_name=validated_data['first_name'],
+            last_name=validated_data['last_name']
+
         )
         return user
 

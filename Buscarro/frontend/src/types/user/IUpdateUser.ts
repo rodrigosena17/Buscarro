@@ -1,5 +1,7 @@
-import type { ICreateUser } from "../../schemas";
-
-export interface IUpdateUser extends ICreateUser {
+export interface IUpdateUser {
   id: string;
+  username: string;
+  first_name: string | null;
+  last_name: string | null;
+  email: string;
 }
